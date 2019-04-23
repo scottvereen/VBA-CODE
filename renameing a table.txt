@@ -1,0 +1,32 @@
+Public Function RenameTable(BLQ10Tracker.accdb As String, _
+   ByVal ' sheet1 $'_ImportErrors As String, _
+   ByVal NewTableName As String) As Boolean
+
+'DataBaseName is the file/path name of the database
+'OldTableName is the name of the table you want to rename
+'NewTableName is new table name
+'Returns true if successful, false otherwise
+
+'Project must include reference to DAO
+
+On Error GoTo errorhandler
+Dim oDB As DAO.Database
+Dim td As DAO.TableDef
+
+Set oDB = Workspaces(0).OpenDatabase(BLQ10Tracker.accdb)
+On Error GoTo errorhandler
+If Not TableExists(oDB, ' sheet1 $'_ImportErrors) Then GoTo errorhandler
+If TableExists(oDB, NewTableName) Then GoTo errorhandler
+'Create table object
+Set td = oDB.TableDefs(' sheet1 $'_ImportErrors)
+td.Name = NewTableName
+oDB.TableDefs.Refresh
+oDB.Close
+RenameTable = True
+Exit Function
+
+errorhandler:
+If Not oDB Is Nothing Then oDB.Close
+Set td = Nothing
+
+End Function

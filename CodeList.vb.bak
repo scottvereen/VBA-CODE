@@ -1,0 +1,26 @@
+Private Sub btnSearch_Click()
+	Dim varItem As Variant
+	Dim strSearch As String
+	Dim Task As String
+	
+	For Each varItem In Me!ListCategory.ItemsSelected
+		strSearch = strSearch & " , " & Me!ListCategory.ItemData(varItem)
+	Next varItem
+	MsgBox(strSearch)
+	If Len(strSearch)=0 Then
+		Task = "select * from TableEmployee"
+	Else
+		strSearch = Right(strSearch, Len(strSearch) -1)
+		MsgBox(strSearch)
+		Task = "select * from TableEmployee where ([SCACategory] in(" & strSearch &"))"
+	End If
+		
+
+End Sub
+
+Private Sub btnClear_Click()
+
+
+
+
+End Sub
