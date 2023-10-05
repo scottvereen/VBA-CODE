@@ -1,0 +1,56 @@
+Option Compare Database
+
+Function closeoutEOY()
+DoCmd.SetWarnings False
+    yearAdd = IIf(Month(Now) < 10, 1, 0)
+    Call updateStatusBar("Making copies of files in \\RUCKW0U9G67001\drm\PBD\DATA CALL\PAE\BUDGET_STATUS\FY## Database Files.....")
+    Call RemoteCompact("\\RUCKW0U9G67001\drm\PBD\00 FINANCIAL OPERATIONS BRANCH\00 PBD SOF Databse\RTS Database\2_Engines\SOF_Database_BE\SOF_Database_BE.accdb", "\\RUCKW0U9G67001\drm\PBD\00 FINANCIAL OPERATIONS BRANCH\00 PBD SOF Databse\RTS Database\Archive\SOF_Database_BE_EOY" & PriorFY(DateAdd("yyyy", yearAdd, Now), "Y") & ".accdb")
+    Call RemoteCompact("\\RUCKW0U9G67001\drm\PBD\00 FINANCIAL OPERATIONS BRANCH\00 PBD SOF Databse\RTS Database\2_Engines\PRR_Engine\PRR_BE\PRR_BE.accdb", "\\RUCKW0U9G67001\drm\PBD\00 FINANCIAL OPERATIONS BRANCH\00 PBD SOF Databse\RTS Database\" & "PRR_BE_EOY" & PriorFY(DateAdd("yyyy", yearAdd, Now), "Y") & ".accdb")
+    Call RemoteCompact("\\RUCKW0U9G67001\drm\PBD\00 FINANCIAL OPERATIONS BRANCH\00 PBD SOF Databse\RTS Database\5_Output\Leadership Database.accdb", "\\RUCKW0U9G67001\drm\PBD\00 FINANCIAL OPERATIONS BRANCH\00 PBD SOF Databse\RTS Database\" & "Leadership Database_EOY" & PriorFY(DateAdd("yyyy", yearAdd, Now), "Y") & ".accdb")
+    DoCmd.OutputTo acOutputTable, "FMT - Obligation Log - Fenced", "ExcelWorkbook(*.xlsx)", "\\RUCKW0U9G67001\drm\PBD\DATA CALL\PAE\BUDGET_STATUS\FY" & PriorFY(DateAdd("yyyy", yearAdd, Now), "Y") & " Database Files\FMT - Obligation Log - Fenced.xlsx", False, "", , acExportQualityPrint
+    DoCmd.OutputTo acOutputTable, "FMT - Obligation Log - Negative Fenced", "ExcelWorkbook(*.xlsx)", "\\RUCKW0U9G67001\drm\PBD\DATA CALL\PAE\BUDGET_STATUS\FY" & PriorFY(DateAdd("yyyy", yearAdd, Now), "Y") & " Database Files\FMT - Obligation Log - Negative Fenced.xlsx", False, "", , acExportQualityPrint
+    DoCmd.OutputTo acOutputTable, "Functional Area Information", "ExcelWorkbook(*.xlsx)", "\\RUCKW0U9G67001\drm\PBD\DATA CALL\PAE\BUDGET_STATUS\FY" & PriorFY(DateAdd("yyyy", yearAdd, Now), "Y") & " Database Files\Functional Area Information.xlsx", False, "", , acExportQualityPrint
+    DoCmd.OutputTo acOutputTable, "Parent Extended and Branch Info", "ExcelWorkbook(*.xlsx)", "\\RUCKW0U9G67001\drm\PBD\DATA CALL\PAE\BUDGET_STATUS\FY" & PriorFY(DateAdd("yyyy", yearAdd, Now), "Y") & " Database Files\Parent Extended and Branch Info.xlsx", False, "", , acExportQualityPrint
+    DoCmd.OutputTo acOutputTable, "TIGER Program Details", "ExcelWorkbook(*.xlsx)", "\\RUCKW0U9G67001\drm\PBD\DATA CALL\PAE\BUDGET_STATUS\FY" & PriorFY(DateAdd("yyyy", yearAdd, Now), "Y") & " Database Files\TIGER Program Details.xlsx", False, "", , acExportQualityPrint
+    DoCmd.OutputTo acOutputTable, "tbl_Requirements_and_Program", "ExcelWorkbook(*.xlsx)", "\\RUCKW0U9G67001\drm\PBD\DATA CALL\PAE\BUDGET_STATUS\FY" & PriorFY(DateAdd("yyyy", yearAdd, Now), "Y") & " Database Files\Requirements & Program.xlsx", False, "", , acExportQualityPrint
+    DoCmd.OutputTo acOutputTable, "Published_Budget_Tiger", "ExcelWorkbook(*.xlsx)", "\\RUCKW0U9G67001\drm\PBD\DATA CALL\PAE\BUDGET_STATUS\FY" & PriorFY(DateAdd("yyyy", yearAdd, Now), "Y") & " Database Files\Published_Budget_Tiger.xlsx", False, "", , acExportQualityPrint
+    DoCmd.OutputTo acOutputTable, "06_tbl_ParentExtended_and_BranchInfo", "ExcelWorkbook(*.xlsx)", "\\RUCKW0U9G67001\drm\PBD\DATA CALL\PAE\BUDGET_STATUS\FY" & PriorFY(DateAdd("yyyy", yearAdd, Now), "Y") & " Database Files\OrgChart.xlsx", False, "", , acExportQualityPrint
+    DoCmd.OutputTo acOutputTable, "02_tbl_CostCollectorInformation", "ExcelWorkbook(*.xlsx)", "\\RUCKW0U9G67001\drm\PBD\DATA CALL\PAE\BUDGET_STATUS\FY" & PriorFY(DateAdd("yyyy", yearAdd, Now), "Y") & " Database Files\CostCollector.xlsx", False, "", , acExportQualityPrint
+    
+    Call updateStatusBar("Deleting old data from SOF tables.....")
+    'DoCmd.OpenQuery "000_Delete_TBL_LOG"
+    'Call execQuery("000 - Delete SOF Detail Query")
+    'Call execQuery("qry_SOF_Detail_Local_Delete")
+    'Call execQuery("000_Delete_GFEBS_SOF_VV")
+    'Call execQuery("000_Delete_GFEBS_SOF_VB")
+    'Call execQuery("000_Delete_ReqsAndPgm")
+    'Call execQuery("000_Delete_FMT_Fenced")
+    'Call execQuery("000_Delete_FMT_Neg_Fenced")
+    'Call execQuery("000_Delete_PrgmDetails")
+    'Call updateStatusBar("Deleting old data from Program and Requirements tables.....")
+    'Call execQuery("000_qry_All_Requests_Delete")
+    'Call execQuery("000_qry_ArchivedRequests_Delete")
+    'Call execQuery("qry_PgmMonthly_Delete")
+    'Call execQuery("qry_PnR_Delete")
+    'Call execQuery("qry_ReqOnly_Delete")
+       
+    'Call CompactAndRepairDB
+    
+    'Call updateStatusBar("Running Compact and Repair on SOF_Database_BE.....")
+    'Path = "\\RUCKW0U9G67001\drm\PBD SOF Database\2_Engines\SOF_Database_BE\"
+    'DBEngine.CompactDatabase Path & "SOF_Database_BE.accdb", Path & "Temp.accdb", , , ";pwd=g8pae"
+    'Kill Path & "SOF_Database_BE.accdb"
+    'Name Path & "Temp.accdb" As Path & "SOF_Database_BE.accdb"
+    
+    'Call updateStatusBar("Running Compact and Repair on PRR_BE.....")
+    'Path = "\\RUCKW0U9G67001\drm\PBD SOF Database\2_Engines\PRR_Engine\PRR_BE\"
+    'DBEngine.CompactDatabase Path & "PRR_BE.accdb", Path & "Temp.accdb"
+    'Kill Path & "PRR_BE.accdb"
+    'Name Path & "Temp.accdb" As Path & "PRR_BE.accdb"
+    
+    Call clearStatusBar
+    DoCmd.Close acForm, "frm_Closeout"
+    MsgBox "EOY closeout is complete.", vbOKOnly, "Update Notice"
+    DoCmd.OpenForm "frm_MainControl", acNormal
+DoCmd.SetWarnings True
+End Function

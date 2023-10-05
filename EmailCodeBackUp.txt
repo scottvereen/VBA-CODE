@@ -1,0 +1,516 @@
+
+    Option Compare Database
+
+
+
+Public Function emailFHP_Program_Approve()
+'***************************************************************************************
+'
+' -This function generates a FHP Program Approve email notification to recipients based on a
+'  Yes/No requirement to receive the notice in the "FHP_Email" column of the "tbl_Emails".
+'
+'***************************************************************************************
+
+Dim dailyMail As MailItem
+Dim strEmail As String
+Dim strBody As String
+Dim strSubject As String
+Dim rs As Recordset
+Dim rs1 As Recordset
+Dim grt As String
+
+processNotice = MsgBox("Would you like to send a FHP Program Update Notification?", vbYesNo, "Process Notice")
+If processNotice = vbYes Then
+    'Call updateStatusBar("Generating email.....")
+    Set dailyMail = Outlook.Application.CreateItem(olMailItem)
+    SQL = "SELECT * FROM tbl_Emails"
+    Set rs = CurrentDb.OpenRecordset(SQL)
+    'Move through Email table to gather emails to poplulate distribtion of the email.
+        With rs
+            If Not .EOF And Not .BOF Then
+                .MoveLast
+                .MoveFirst
+                    For i = 0 To .RecordCount - 1
+                        If !FHP_Email = True Then
+                          strEmail = strEmail & !Email & ";"
+                          .MoveNext
+                        Else: .MoveNext
+                        End If
+                    Next
+            End If
+        End With
+
+    'Retrieve the text to use in the body of the email based on the type selected from a dropdown
+    SQL1 = "SELECT * From tbl_EmailMessage"
+    Set rs1 = CurrentDb.OpenRecordset(SQL1)
+    'With grt
+        If Time <= TimeValue("11:59:59 AM") Then
+            grt = "Good Morning,"
+        Else
+            grt = "Good Afternoon,"
+        End If
+    'End With
+    'Combine email body and subject based on message
+    With rs1
+        strSubject = "**FHP PROGRAM UPDATE NOTICE**"
+    End With
+    'Change the following email information as needed
+          With dailyMail
+               .Subject = strSubject
+               '(Format(Now, "dd MMMM yy"))
+               .To = strEmail
+               '.Attachments.Add ("\\RUCKW0U9G67001\drm\PBD\DATA CALL\PAE\Daily Reports\SAG Recap\SAG " & (Format(Now, "mm-dd-yyyy"))) & ".xlsx"
+               .Importance = olImportanceHigh
+               '.Send
+               .Display
+               'Sets body of email equal to message type selected with daily numbers and signature block of sender
+               .HTMLBody = grt & "<b> <br><br><br>FHP Program's Have Been Added: " & " " & Time & _
+               "</b><br><br>Waiting for Approval.<br><br><br>v/r," & "<br><br>Financial Operations"
+               
+          End With
+    ElseIf vbNo Then
+    'Call clearStatusBar
+    End If
+End Function
+
+Public Function emailFHP_Requirement_Approve()
+'***************************************************************************************
+'
+' -This function generates a FHP Requirement Approve email notification to recipients based on a
+'  Yes/No requirement to receive the notice in the "FHP_Email" column of the "tbl_Emails".
+'
+'***************************************************************************************
+
+Dim dailyMail As MailItem
+Dim strEmail As String
+Dim strBody As String
+Dim strSubject As String
+Dim rs As Recordset
+Dim rs1 As Recordset
+Dim grt As String
+
+processNotice = MsgBox("Would you like to send a FHP Requirement Update Notification?", vbYesNo, "Process Notice")
+If processNotice = vbYes Then
+    'Call updateStatusBar("Generating email.....")
+    Set dailyMail = Outlook.Application.CreateItem(olMailItem)
+    SQL = "SELECT * FROM tbl_Emails"
+    Set rs = CurrentDb.OpenRecordset(SQL)
+    'Move through Email table to gather emails to poplulate distribtion of the email.
+        With rs
+            If Not .EOF And Not .BOF Then
+                .MoveLast
+                .MoveFirst
+                    For i = 0 To .RecordCount - 1
+                        If !FHP_Email = True Then
+                          strEmail = strEmail & !Email & ";"
+                          .MoveNext
+                        Else: .MoveNext
+                        End If
+                    Next
+            End If
+        End With
+
+    'Retrieve the text to use in the body of the email based on the type selected from a dropdown
+    SQL1 = "SELECT * From tbl_EmailMessage"
+    Set rs1 = CurrentDb.OpenRecordset(SQL1)
+    'With grt
+        If Time <= TimeValue("11:59:59 AM") Then
+            grt = "Good Morning,"
+        Else
+            grt = "Good Afternoon,"
+        End If
+    'End With
+    'Combine email body and subject based on message
+    With rs1
+        strSubject = "**FHP REQUIREMENT UPDATE NOTICE**"
+    End With
+    'Change the following email information as needed
+          With dailyMail
+               .Subject = strSubject
+               '(Format(Now, "dd MMMM yy"))
+               .To = strEmail
+               '.Attachments.Add ("\\RUCKW0U9G67001\drm\PBD\DATA CALL\PAE\Daily Reports\SAG Recap\SAG " & (Format(Now, "mm-dd-yyyy"))) & ".xlsx"
+               .Importance = olImportanceHigh
+               '.Send
+               .Display
+               'Sets body of email equal to message type selected with daily numbers and signature block of sender
+               .HTMLBody = grt & "<b> <br><br><br>FHP Requirement's Have Been Added: " & " " & Time & _
+               "</b><br><br>Waiting for Approval.<br><br><br>v/r," & "<br><br>Financial Operations"
+               
+          End With
+    ElseIf vbNo Then
+    
+    End If
+End Function
+
+
+Public Function emailFHP_PgmReq_Approve()
+
+'***************************************************************************************
+'
+' -This function generates a FHP Pgm&Req Approve email notification to recipients based on a
+'  Yes/No requirement to receive the notice in the "FHP_Email" column of the "tbl_Emails".
+'
+'***************************************************************************************
+
+Dim dailyMail As MailItem
+Dim strEmail As String
+Dim strBody As String
+Dim strSubject As String
+Dim rs As Recordset
+Dim rs1 As Recordset
+Dim grt As String
+
+processNotice = MsgBox("Would you like to send a FHP Pgm&Req Update Notification?", vbYesNo, "Process Notice")
+If processNotice = vbYes Then
+    'Call updateStatusBar("Generating email.....")
+    Set dailyMail = Outlook.Application.CreateItem(olMailItem)
+    SQL = "SELECT * FROM tbl_Emails"
+    Set rs = CurrentDb.OpenRecordset(SQL)
+    'Move through Email table to gather emails to poplulate distribtion of the email.
+        With rs
+            If Not .EOF And Not .BOF Then
+                .MoveLast
+                .MoveFirst
+                    For i = 0 To .RecordCount - 1
+                        If !FHP_Email = True Then
+                          strEmail = strEmail & !Email & ";"
+                          .MoveNext
+                        Else: .MoveNext
+                        End If
+                    Next
+            End If
+        End With
+
+    'Retrieve the text to use in the body of the email based on the type selected from a dropdown
+    SQL1 = "SELECT * From tbl_EmailMessage"
+    Set rs1 = CurrentDb.OpenRecordset(SQL1)
+    'With grt
+        If Time <= TimeValue("11:59:59 AM") Then
+            grt = "Good Morning,"
+        Else
+            grt = "Good Afternoon,"
+        End If
+    'End With
+    'Combine email body and subject based on message
+    With rs1
+        strSubject = "**FHP Pgm&Req UPDATE NOTICE**"
+    End With
+    'Change the following email information as needed
+          With dailyMail
+               .Subject = strSubject
+               '(Format(Now, "dd MMMM yy"))
+               .To = strEmail
+               '.Attachments.Add ("\\RUCKW0U9G67001\drm\PBD\DATA CALL\PAE\Daily Reports\SAG Recap\SAG " & (Format(Now, "mm-dd-yyyy"))) & ".xlsx"
+               .Importance = olImportanceHigh
+               '.Send
+               .Display
+               'Sets body of email equal to message type selected with daily numbers and signature block of sender
+               .HTMLBody = grt & "<b> <br><br><br>FHP Pgm&Req's Have Been Added: " & " " & Time & _
+               "</b><br><br>Waiting for Approval.<br><br><br>v/r," & "<br><br>Financial Operations"
+               
+          End With
+    ElseIf vbNo Then
+    
+    End If
+End Function
+
+Public Sub requestNoticePgmMon()
+'********************************************************************************************
+'
+' -This function generates an "Request Notice" email notification to recipients when a
+'  request from the PRR DB has been submitted by an Analyst.
+'
+'********************************************************************************************
+ Dim Email As MailItem
+    Dim strEmail As String
+    Dim strBody As String
+    Dim strSubject As String
+    Dim rs As Recordset
+    Dim rs1 As Recordset
+    Dim fs As New FileSystemObject
+    
+    Set Email = Outlook.Application.CreateItem(olMailItem)
+    
+    SQL = "SELECT * FROM tbl_Emails"
+    Set rs = CurrentDb.OpenRecordset(SQL)
+    'Gathers email recipient's email addresses to poplulate distribtion of the email
+    With rs
+        If Not .EOF And Not .BOF Then
+            .MoveLast
+            .MoveFirst
+                For i = 0 To .RecordCount - 1
+                    If !AwaitingApproval = True Or !BC_Approval = True Then
+                        strEmail = strEmail & !Email & ";"
+                        .MoveNext
+                    Else: .MoveNext
+                    End If
+                Next
+        End If
+    End With
+    'Retrieve the text to use in the body of the email based on the type
+    SQL1 = "SELECT * From tbl_OutlookBody WHERE Type = 'AwaitingApproval'"
+    Set rs1 = CurrentDb.OpenRecordset(SQL1)
+    Dim wb As Workbook
+    Dim requestID As Integer
+    Dim aName As String
+    'requestID = Me!requestID.Value
+    'aName = Me!AnalystName.Value
+    
+    With rs1
+            strBody = !MsgBody & vbCrLf & vbCrLf & "Request Info - " & [Forms]![frm_ProgramMonthly_Request].[AnalystName].Value & " has submitted Request ID:  #" & [Forms]![frm_ProgramMonthly_Request].[RID].Value & " for approval." '& vbCrLF *****add request details here*****
+            strSubject = !MsgSubject
+    End With
+          'Change the following email information as needed
+          With Email
+                    .Subject = strSubject & " ***" & [Forms]![frm_ProgramMonthly_Request].[Reason].Value & "***"
+                    .To = strEmail
+                    '.Attachments.Add ""
+                    .Importance = olImportanceHigh
+                    '.Send
+                    .Display
+                    .Body = strBody
+          End With
+End Sub
+
+Public Function GetUserName() As String
+    ' GetUserName = Environ("USERNAME")
+    ' Better method, see comment by HansUp
+    GetUserName = CreateObject("WScript.Network").Username
+End Function
+
+Public Sub BCApprovalPgmMon()
+'********************************************************************************************
+'
+' -This function generates an "Approval" email notification to recipients when a
+'  Program Only Request has been approved by the Branch Chief (BC)
+'
+'********************************************************************************************
+Dim Email As MailItem
+    Dim strEmail As String
+    Dim strBody As String
+    Dim strSubject As String
+    Dim rs As Recordset
+    Dim rs1 As Recordset
+    Dim fs As New FileSystemObject
+    
+    Set Email = Outlook.Application.CreateItem(olMailItem)
+    
+    SQL = "SELECT * FROM tbl_Emails"
+    Set rs = CurrentDb.OpenRecordset(SQL)
+    'Gathers email recipient's email addresses to poplulate distribtion of the email
+    With rs
+        If Not .EOF And Not .BOF Then
+            .MoveLast
+            .MoveFirst
+                For i = 0 To .RecordCount - 1
+                    If !BC_Approval = True Or !Username = [Forms]![frm_ProgramMonthly_Request_BC].[AnalystName].Value Then
+                        strEmail = strEmail & !Email & ";"
+                        .MoveNext
+                    Else: .MoveNext
+                    End If
+                Next
+        End If
+    End With
+    'Retrieve the text to use in the body of the email based on the type
+    SQL1 = "SELECT * From tbl_OutlookBody WHERE Type = 'BC_Approval'"
+    Set rs1 = CurrentDb.OpenRecordset(SQL1)
+    Dim wb As Workbook
+    Dim requestID As Integer
+    Dim aName As String
+    'requestID = Me!requestID.Value
+    'aName = Me!AnalystName.Value
+    
+    With rs1
+            strBody = !MsgBody & vbCrLf & vbCrLf & "Request Info - Request ID:  #" & [Forms]![frm_ProgramMonthly_Request_BC].[RID].Value & " was APPROVED by " & [Forms]![frm_ProgramMonthly_Request_BC].[BC_Name].Value & "." '& vbCrLF *****add request details here*****
+            strSubject = !MsgSubject
+    End With
+          'Change the following email information as needed
+          With Email
+                    .Subject = strSubject & " ***" & [Forms]![frm_ProgramMonthly_Request_BC].[Reason] & "***"
+                    .To = strEmail
+                    '.Attachments.Add ""
+                    .Importance = olImportanceHigh
+                    '.Send
+                    .Display
+                    .Body = strBody
+          End With
+End Sub
+
+
+Public Sub rejectNoticeBCPgmMon()
+'********************************************************************************************
+'
+' -This function generates an "Rejected" email notification to recipients when a
+'  Program Only Request has been rejected by the Branch Chief (BC)
+'
+'********************************************************************************************
+Dim Email As MailItem
+    Dim strEmail As String
+    Dim strBody As String
+    Dim strSubject As String
+    Dim rs As Recordset
+    Dim rs1 As Recordset
+    Dim fs As New FileSystemObject
+    
+    Set Email = Outlook.Application.CreateItem(olMailItem)
+    
+    SQL = "SELECT * FROM tbl_Emails"
+    Set rs = CurrentDb.OpenRecordset(SQL)
+    'Gathers email recipient's email addresses to poplulate distribtion of the email
+    With rs
+        If Not .EOF And Not .BOF Then
+            .MoveLast
+            .MoveFirst
+                For i = 0 To .RecordCount - 1
+                    If !Rejection Or !Username = [Forms]![frm_ProgramMonthly_Request_BC].[AnalystName].Value Then
+                        strEmail = strEmail & !Email & ";"
+                        .MoveNext
+                    Else: .MoveNext
+                    End If
+                Next
+        End If
+    End With
+    'Retrieve the text to use in the body of the email based on the type
+    SQL1 = "SELECT * From tbl_OutlookBody WHERE Type = 'Rejection'"
+    Set rs1 = CurrentDb.OpenRecordset(SQL1)
+    Dim wb As Workbook
+    Dim requestID As Integer
+    Dim aName As String
+    'requestID = Me!requestID.Value
+    'aName = Me!AnalystName.Value
+    
+    With rs1
+            strBody = !MsgBody & vbCrLf & vbCrLf & "Request Info - Request ID:  #" & [Forms]![frm_ProgramMonthly_Request_BC].[RID].Value & " was REJECTED by " & [Forms]![frm_ProgramMonthly_Request_BC].[BC_Name].Value & "." '& vbCrLF *****add request details here*****
+            strSubject = !MsgSubject
+    End With
+          'Change the following email information as needed
+          With Email
+                    .Subject = strSubject & " ***" & [Forms]![frm_ProgramMonthly_Request_BC].[Reason] & "***"
+                    .To = strEmail
+                    '.Attachments.Add ""
+                    .Importance = olImportanceHigh
+                    '.Send
+                    .Display
+                    .Body = strBody
+          End With
+End Sub
+
+Public Sub rejectNoticeBOPgmMon()
+'********************************************************************************************
+'
+' -This function generates an "Rejected" email notification to recipients when a
+'  Program Only Request has been rejected by the Budget Officer (BO)
+'
+'********************************************************************************************
+Dim Email As MailItem
+    Dim strEmail As String
+    Dim strBody As String
+    Dim strSubject As String
+    Dim rs As Recordset
+    Dim rs1 As Recordset
+    Dim fs As New FileSystemObject
+    
+    Set Email = Outlook.Application.CreateItem(olMailItem)
+    
+    SQL = "SELECT * FROM tbl_Emails"
+    Set rs = CurrentDb.OpenRecordset(SQL)
+    'Gathers email recipient's email addresses to poplulate distribtion of the email
+    With rs
+        If Not .EOF And Not .BOF Then
+            .MoveLast
+            .MoveFirst
+                For i = 0 To .RecordCount - 1
+                    If !Rejection Or !Username = [Forms]![frm_ProgramMonthly_Request_BO].[AnalystName].Value Or !Username = [Forms]![frm_ProgramMonthly_Request_BO].[BC_Name].Value Then
+                        strEmail = strEmail & !Email & ";"
+                        .MoveNext
+                    Else: .MoveNext
+                    End If
+                Next
+        End If
+    End With
+    'Retrieve the text to use in the body of the email based on the type
+    SQL1 = "SELECT * From tbl_OutlookBody WHERE Type = 'Rejection'"
+    Set rs1 = CurrentDb.OpenRecordset(SQL1)
+    Dim wb As Workbook
+    Dim requestID As Integer
+    Dim aName As String
+    'requestID = Me!requestID.Value
+    'aName = Me!AnalystName.Value
+    
+    With rs1
+            strBody = !MsgBody & vbCrLf & vbCrLf & "Request Info - Request ID:  #" & [Forms]![frm_ProgramMonthly_Request_BO].[RID].Value & " was REJECTED by " & [Forms]![frm_ProgramMonthly_Request_BO].[BO_Name].Value & "." '& vbCrLF *****add request details here*****
+            strSubject = !MsgSubject
+    End With
+          'Change the following email information as needed
+          With Email
+                    .Subject = strSubject & " ***" & [Forms]![frm_ProgramMonthly_Request_BO].[Reason] & "***"
+                    .To = strEmail
+                    '.Attachments.Add ""
+                    .Importance = olImportanceHigh
+                    '.Send
+                    .Display
+                    .Body = strBody
+          End With
+End Sub
+
+Public Sub BOApprovalPgmMon()
+'********************************************************************************************
+'
+' -This function generates an "Approval" email notification to recipients when a
+'  Program Only Request has been approved by the Budget Officer (BO)
+'
+'********************************************************************************************
+Dim Email As MailItem
+    Dim strEmail As String
+    Dim strBody As String
+    Dim strSubject As String
+    Dim rs As Recordset
+    Dim rs1 As Recordset
+    Dim fs As New FileSystemObject
+    
+    Set Email = Outlook.Application.CreateItem(olMailItem)
+    
+    SQL = "SELECT * FROM tbl_Emails"
+    Set rs = CurrentDb.OpenRecordset(SQL)
+    'Gathers email recipient's email addresses to poplulate distribtion of the email
+    With rs
+        If Not .EOF And Not .BOF Then
+            .MoveLast
+            .MoveFirst
+                For i = 0 To .RecordCount - 1
+                    If !FinalApproval = True Or !Username = [Forms]![frm_ProgramMonthly_Request_BO].[AnalystName].Value Or !Username = [Forms]![frm_ProgramMonthly_Request_BO].[BC_Name].Value Then
+                        strEmail = strEmail & !Email & ";"
+                        .MoveNext
+                    Else: .MoveNext
+                    End If
+                Next
+        End If
+    End With
+    'Retrieve the text to use in the body of the email based on the type
+    SQL1 = "SELECT * From tbl_OutlookBody WHERE Type = 'FinalApproval'"
+    Set rs1 = CurrentDb.OpenRecordset(SQL1)
+    Dim wb As Workbook
+    Dim requestID As Integer
+    Dim aName As String
+    'requestID = Me!requestID.Value
+    'aName = Me!AnalystName.Value
+    
+    With rs1
+            strBody = !MsgBody & vbCrLf & vbCrLf & "Request Info - Request ID:  #" & [Forms]![frm_ProgramMonthly_Request_BO].[RID].Value & " was APPROVED by " & [Forms]![frm_ProgramMonthly_Request_BO].[BO_Name].Value & "." '& vbCrLF *****add request details here*****
+            strSubject = !MsgSubject
+    End With
+          'Change the following email information as needed
+          With Email
+                    .Subject = strSubject & " ***" & [Forms]![frm_ProgramMonthly_Request_BO].[Reason] & "***"
+                    .To = strEmail
+                    '.Attachments.Add ""
+                    .Importance = olImportanceHigh
+                    '.Send
+                    .Display
+                    .Body = strBody
+          End With
+End Sub
+
+
+

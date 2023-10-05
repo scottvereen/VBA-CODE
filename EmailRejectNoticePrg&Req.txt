@@ -1,0 +1,99 @@
+    '********************************************************************************************
+    '
+    ' -This function generates an "Rejected" email notification to recipients when a
+    '  Program and Requirment Only Request has been rejected by the Branch Chief (BC) created by STV
+    '
+    '********************************************************************************************
+
+
+Public Sub rejectNoticePrgandReqFHP()
+
+        Set dbs = CurrentDb()
+        Set qdf = dbs.QueryDefs("Qry_FHPPrg&ReqRequest")
+        'qdf.Parameters(0) = [BC_Approved]
+        Set rst = qdf.OpenRecordset()
+
+
+
+
+'This populates the message
+
+With rst
+  Do While Not rst.EOF
+  Mailbody = Mailbody & "RID: " & ![RID] & " | " & " FHP Requested by: " & ![AnalystName] & _
+   " | " & " REJECTED by Branch Chief" & ![BC_Name] & " | " & "Requested Date" & ![RequestDTG] & "|" & " Reson For Rejection as follows: " & ![Remarks] & vbCrLf
+  rst.MoveNext
+  Loop
+End With
+
+
+Set olApp = CreateObject("Outlook.application")
+Set olItem = olApp.CreateItem(0)
+
+'This is Preexisting code that loops throught the table
+'*******************************************************************************
+
+Set dailyMail = Outlook.Application.CreateItem(olMailItem)
+    SQL = "SELECT * FROM tbl_Emails"
+    Set rs = CurrentDb.OpenRecordset(SQL)
+    'Move through Email table to gather emails to poplulate distribtion of the email.
+        With rs
+            If Not .EOF And Not .BOF Then
+                .MoveLast
+                .MoveFirst
+                    For i = 0 To .RecordCount - 1
+                        If !FHP_Email = True Then
+                          strEmail = strEmail & !Email & ";"
+                          .MoveNext
+                        Else: .MoveNext
+                        End If
+                    Next
+            End If
+        End With
+'**************************************************************************************
+
+
+olItem.Display
+olItem.To = strEmail
+olItem.Subject = "FHP Rejection"
+olItem.Body = Mailbody
+olItem.Importance = olImportanceHigh
+Set dbs = CurrentDb()
+Set qdf = dbs.QueryDefs("Qry_FHPPrg&ReqRequest")
+'qdf.Parameters(0) = [BC_Approved]
+Set rst = qdf.OpenRecordset()
+
+strHTML = "<HTML><Body><table border='1' width='50%'><tr><th>Request Date</th><th>Submitted By</th>" & _
+"<th>Department</th><th>Effective Date</th><th>Description</th></tr>"
+
+'Initialize MailBody
+Mailbody = strHTML
+
+
+With rst
+  Do While Not rst.EOF
+  ' Here you append the current record to the end of the Mailbody variable.
+  Mailbody = strHTML & "<tr><td>" & rst("RequestDTG") & "</td><td>" & _
+        rst("AnalystName") & "</td><td>" & rst("RID") & "</td><td>" & _
+        rst("BC_Name") & "</td><td>" & rst("Remarks") & "</td></tr>" & _
+        vbCrLf
+
+   rst.MoveNext
+   Loop
+End With
+
+
+
+
+
+End Sub
+
+
+DoCmd.SetWarnings Fales
+Call rejectNoticePrgandReqFHP
+
+On Error GoTo ErrHandler:
+    DoCmd.RunCommand acCmdSaveRecord
+
+ErrHandler:
+    Me.Requery

@@ -1,0 +1,160 @@
+Public Function RemoteCompact(SourcePath As String, BUPath As String) '
+
+Dim aFilename As Variant
+Dim SourceFile As String
+Dim BUFile As String
+On Error GoTo RemoteCompact_Err
+
+'These lines assign the variables full path and filenames
+SourceFile = SourcePath
+BUFile = BUPath
+
+
+'Copies file to backup folder and renames it with the temp_ prefix.
+Set aFilename = CreateObject("Scripting.FileSystemObject")
+aFilename.CopyFile SourceFile, BUFile, True
+
+
+''Check that file exists
+SetAttr BUFile, vbNormal
+'This section copies the temp_ file back to proper location, compacts it, and renames it back to the original filename.
+FileCopy SourceFile, BUFile
+
+RemoteCompact_Exit:
+    Exit Function
+
+RemoteCompact_Err:
+    'MsgBox Error$
+    Resume RemoteCompact_Exit
+End Function
+
+Public Function CopyLeadershipDB()
+Dim strDir As String
+strDir = "C:\SourceData\"
+
+    If Dir(strDir, vbDirectory) = "" Then
+        MkDir strDir
+    End If
+    
+     Call RemoteCompact("\\RUCKW0U9G67001\DRM\PBD\00 FINANCIAL OPERATIONS BRANCH\00 PBD SOF Databse\RTS Database\5_Output\Leadership Database.accdb", "C:\SourceData\Leadership Database.accdb")
+
+End Function
+
+Sub refreshFile()
+    Dim fso As Object
+    Dim f As Object
+    Dim wbConnection As WorkbookConnection
+    Dim GetLastModDate As Date
+    Call CopyLeadershipDB 'Creates folder on local drive if it does not exist; copies source DB to the folder
+    
+    Set fso = CreateObject("Scripting.FileSystemObject")
+    Set f = fso.GetFile("C:\SourceData\Leadership Database.accdb")
+    
+    For Each wbConnection In ActiveWorkbook.Connections
+        wbConnection.OLEDBConnection.BackgroundQuery = False
+        wbConnection.Refresh
+        wbConnection.OLEDBConnection.BackgroundQuery = True
+    Next wbConnection
+    
+    For Each pc In ActiveWorkbook.PivotCaches
+        pc.Refresh
+    Next pc
+    
+    GetLastModDate = f.DateLastModified
+    Call dateUpdate(GetLastModDate)
+    
+    Worksheets("SAG Recap - Direct").PageSetup.LeftFooter = "As of: " & Format(GetLastModDate, "mm-dd-yyyy hh:nn AM/PM")
+    
+    Set fso = Nothing
+    MsgBox "Update Complete"
+End Sub
+
+Sub unfilter()
+
+    Set pt = Worksheets("Activity").PivotTables("PivotTable1")
+
+    pt.ClearAllFilters
+    pt.PivotFields("Object Class Description").PivotItems("ALLOBJ").Visible = False
+    'pt.PivotFields("Parent Organization").PivotItems("(blank)").Visible = False
+
+End Sub
+
+Function dateUpdate(Time)
+Dim checkSheet As Worksheet
+Dim shtCnt As Integer
+'used as the sheet index counter as the for loop iterates through all the sheets
+shtCnt = 1
+
+For Each checkSheet In ThisWorkbook.Worksheets
+'checks to see if there is a text box with the text "Date Last Updated" in the sheet
+If locateUpdate(shtCnt) Then
+ Row = checkSheet.Range("A:Z").Find(what:="Date Last Updated").Row + 1
+ Column = checkSheet.Range("A:Z").Find(what:="Date Last Updated").Column
+ 'adds the time in the cell below the text found
+    checkSheet.Cells(Row, Column) = Format(Time, "mm-dd-yyyy hh:nn:ss AM/PM")
+    End If
+    shtCnt = shtCnt + 1
+Next checkSheet
+
+End Function
+
+Function locateUpdate(Number As Integer) As Boolean
+Dim ws As Worksheet
+On Error Resume Next
+Set ws = Sheets(Number)
+tested = ws.Range("A:Z").Find(what:="Date Last Updated")
+If Err.Number <> 0 Then
+    locateUpdate = False
+Else
+    locateUpdate = True
+End If
+'resets error counter
+On Error GoTo -1
+End Function
+
+Sub disconnectTable()
+
+Dim ws As Worksheet
+Dim SOFtable As ListObject
+
+fileLoc = grabFolder
+monthYear = Format(Now, "mmm_yyyy")
+Application.DisplayAlerts = False
+On Error GoTo errorhandle
+ThisWorkbook.SaveAs Filename:=fileLoc & "\SOF " & monthYear & ".xlsx", FileFormat:=51
+
+'grabs the SOF table and disconnects it
+Set ws = ActiveWorkbook.Worksheets("SOF_Detail")
+Set SOFtable = ws.ListObjects(1)
+
+SOFtable.Unlink
+
+ThisWorkbook.Save
+
+Application.DisplayAlerts = True
+
+MsgBox "SOF has been disconnected"
+
+Exit Sub
+errorhandle:
+MsgBox "Excel could not save the file. The workbook has not been disconnected, please try again."
+End Sub
+
+Function grabFolder()
+  Dim fd As Office.FileDialog
+
+    'Sets the file explorer that will be opened later for the user to pick a file from
+    Set fd = Application.FileDialog(msoFileDialogFolderPicker)
+    
+    With fd
+        .Title = "Please select where you would like to save."
+        
+        If .Show = True Then
+            grabFolder = .SelectedItems(1)
+        Else
+            End
+        End If
+    End With
+
+End Function
+
